@@ -22,6 +22,10 @@ public class UserService {
         return userMapper.getUser(username) == null;
     }
 
+    /*public int getUserId(String username){
+        return userMapper.getUser(username).getUserId();
+    } */
+
     public int createUser(User user) {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
