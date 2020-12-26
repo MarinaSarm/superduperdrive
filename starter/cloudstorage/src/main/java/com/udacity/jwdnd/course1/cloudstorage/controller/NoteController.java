@@ -23,16 +23,27 @@ public class NoteController {
     @PostMapping()
     public String addNote(Authentication authentication, @ModelAttribute Note note, Model model) {
         note.setUserId(this.userService.getUser(authentication.getName()).getUserId());
-        try {
-            this.noteService.addNote(note);
-            model.addAttribute("notes", this.noteService.getNotes());
-            model.addAttribute("success", true);
-            model.addAttribute("message", "Note was successfully added");
-        } catch (Exception e) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "Not cannot be added" + e.getMessage());
+        if(note.getNoteId() == null) {
+            try {
+                this.noteService.addNote(note);
+                model.addAttribute("notes", this.noteService.getNotes());
+                model.addAttribute("success", true);
+                model.addAttribute("message", "Note was successfully added");
+            } catch (Exception e) {
+                model.addAttribute("error", true);
+                model.addAttribute("message", "Note could not be added" + e.getMessage());
+            }
+        } else {
+            try {
+                this.noteService.updateNote(note);
+                model.addAttribute("notes", this.noteService.getNotes());
+                model.addAttribute("success", true);
+                model.addAttribute("message", "Note was successfully updated");
+            } catch (Exception e) {
+                model.addAttribute("error", true);
+                model.addAttribute("message", "Note could not be updated" + e.getMessage());
+            }
         }
-        System.out.println("here");
         return "home";
     }
 
@@ -41,6 +52,7 @@ public class NoteController {
         User user = this.userService.getUser(authentication.getName());
         try {
             noteService.deleteNote(noteid);
+            model.addAttribute("notes", this.noteService.getNotes());
             model.addAttribute("success", true);
             model.addAttribute("message", "Note was deleted");
         } catch (Exception e) {
