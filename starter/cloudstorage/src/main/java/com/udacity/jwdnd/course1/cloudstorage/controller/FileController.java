@@ -1,23 +1,32 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.mapper.FileMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/files")
 public class FileController {
     private FileService fileService;
     private UserService userService;
+
     public FileController(FileService fileService, UserService userService) {
         this.fileService = fileService;
         this.userService = userService;
@@ -25,23 +34,23 @@ public class FileController {
 
     @PostMapping()
     public String addFile(@RequestParam("fileUpload") MultipartFile fileNew, Authentication authentication, @ModelAttribute File file, Model model) throws IOException {
-        if(fileNew.isEmpty()) {
-            model.addAttribute("success",false);
-            model.addAttribute("message","No file selected to upload!");
+        if (fileNew.isEmpty()) {
+            model.addAttribute("success", false);
+            model.addAttribute("message", "No file selected to upload!");
             return "home";
         }
         this.fileService.addFile(authentication, fileNew);
         model.addAttribute("files", this.fileService.getFiles(this.userService.getUser(authentication.getName()).getUserId()));
-        model.addAttribute("success",true);
-        model.addAttribute("message","New File added successfully!");
+        model.addAttribute("success", true);
+        model.addAttribute("message", "New File added successfully!");
         return "home";
     }
 
-    @GetMapping ("delete/{fileid}")
+    @GetMapping("delete/{fileid}")
     public String deletefile(Authentication authentication, @ModelAttribute File file, Model model, @PathVariable(value = "fileid") Integer fileid) {
         User user = this.userService.getUser(authentication.getName());
         try {
-            fileService.deletefile(fileid);
+            fileService.deleteFile(fileid);
             model.addAttribute("files", this.fileService.getFiles(user.getUserId()));
             model.addAttribute("success", true);
             model.addAttribute("message", "file was deleted");
@@ -50,5 +59,15 @@ public class FileController {
             model.addAttribute("message", "Was not able to delete file" + e.getMessage());
         }
         return "home";
+    }
+
+    @GetMapping("view/{filename}")
+    public ResponseEntity<File> getFile(Authentication authentication, @PathVariable(value = "filename") String filename) {
+        User user = this.userService.getUser(authentication.getName());
+        File newFile = this.fileService.getFile(filename);
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + newFile.getFileName() + "\"")
+            .body(newFile);
+
     }
 }

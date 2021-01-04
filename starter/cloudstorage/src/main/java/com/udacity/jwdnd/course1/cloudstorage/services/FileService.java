@@ -29,8 +29,12 @@ public class FileService {
         return fileMapper.insert(newFile);
     }
 
-    public void deletefile(Integer fileid) {
+    public void deleteFile(Integer fileid) {
         fileMapper.deleteFile(fileid);
+    }
+
+    public File getFile(String filename) {
+        return fileMapper.getFile(filename);
     }
 
     public List<File> getFiles(Integer userid) {
