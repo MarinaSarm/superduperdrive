@@ -30,7 +30,7 @@ public class NoteService {
         noteMapper.updateNote(newNote);
     }
 
-    public List<Note> getNotes() {
-        return noteMapper.getAllNotes();
+    public List<Note> getNotes(Integer userid) {
+        return noteMapper.getAllNotes(userid);
     }
 }

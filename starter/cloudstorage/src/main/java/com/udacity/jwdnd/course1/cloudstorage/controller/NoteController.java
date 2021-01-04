@@ -26,7 +26,7 @@ public class NoteController {
         if(note.getNoteId() == null) {
             try {
                 this.noteService.addNote(note);
-                model.addAttribute("notes", this.noteService.getNotes());
+                model.addAttribute("notes", this.noteService.getNotes(this.userService.getUser(authentication.getName()).getUserId()));
                 model.addAttribute("success", true);
                 model.addAttribute("message", "Note was successfully added");
             } catch (Exception e) {
@@ -36,7 +36,7 @@ public class NoteController {
         } else {
             try {
                 this.noteService.updateNote(note);
-                model.addAttribute("notes", this.noteService.getNotes());
+                model.addAttribute("notes", this.noteService.getNotes(this.userService.getUser(authentication.getName()).getUserId()));
                 model.addAttribute("success", true);
                 model.addAttribute("message", "Note was successfully updated");
             } catch (Exception e) {
@@ -52,7 +52,7 @@ public class NoteController {
         User user = this.userService.getUser(authentication.getName());
         try {
             noteService.deleteNote(noteid);
-            model.addAttribute("notes", this.noteService.getNotes());
+            model.addAttribute("notes", this.noteService.getNotes(user.getUserId()));
             model.addAttribute("success", true);
             model.addAttribute("message", "Note was deleted");
         } catch (Exception e) {
