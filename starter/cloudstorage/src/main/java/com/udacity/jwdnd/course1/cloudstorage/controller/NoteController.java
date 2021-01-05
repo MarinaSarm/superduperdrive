@@ -20,7 +20,7 @@ public class NoteController {
         this.noteService = noteService;
         this.userService = userService;
     }
-    @PostMapping()
+    @PostMapping("add")
     public String addNote(Authentication authentication, @ModelAttribute Note note, Model model) {
         note.setUserId(this.userService.getUser(authentication.getName()).getUserId());
         if(note.getNoteId() == null) {
@@ -44,7 +44,7 @@ public class NoteController {
                 model.addAttribute("message", "Note could not be updated" + e.getMessage());
             }
         }
-        return "home";
+        return "result";
     }
 
     @GetMapping ("delete/{noteid}")
@@ -59,6 +59,6 @@ public class NoteController {
             model.addAttribute("error", true);
             model.addAttribute("message", "Was not able to delete note" + e.getMessage());
         }
-        return "home";
+        return "result";
     }
 }

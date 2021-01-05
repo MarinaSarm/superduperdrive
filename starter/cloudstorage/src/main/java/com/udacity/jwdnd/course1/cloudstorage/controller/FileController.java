@@ -40,12 +40,12 @@ public class FileController {
             model.addAttribute("files", this.fileService.getFiles(user.getUserId()));
             model.addAttribute("success", false);
             model.addAttribute("message", "No file selected to upload!");
-            return "home";
+            return "result";
         }
         if (this.fileService.fileNameExist(fileNew.getOriginalFilename(), user.getUserId())) {
             model.addAttribute("files", this.fileService.getFiles(user.getUserId()));
             model.addAttribute("uploadError", "File with the same filename already exists!");
-            return "home";
+            return "result";
         }
         try {
             File uploadFile = new File();
@@ -62,7 +62,7 @@ public class FileController {
             e.printStackTrace();
             model.addAttribute("uploadError", e.getMessage());
         }
-        return "home";
+        return "result";
     }
 
     @GetMapping("delete/{fileid}")
@@ -77,7 +77,7 @@ public class FileController {
             model.addAttribute("error", true);
             model.addAttribute("message", "Was not able to delete file" + e.getMessage());
         }
-        return "home";
+        return "result";
     }
 
     @GetMapping("view/{filename}")
