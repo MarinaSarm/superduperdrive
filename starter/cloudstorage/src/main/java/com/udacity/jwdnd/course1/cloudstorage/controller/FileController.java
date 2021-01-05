@@ -36,15 +36,14 @@ public class FileController {
     @PostMapping("upload")
     public String addFile(@RequestParam("fileUpload") MultipartFile fileNew, Authentication authentication, @ModelAttribute File file, Model model) throws IOException {
         User user = this.userService.getUser(authentication.getName());
-        System.out.println("first");
         if (fileNew.isEmpty()) {
-            System.out.println("empty");
+            model.addAttribute("files", this.fileService.getFiles(user.getUserId()));
             model.addAttribute("success", false);
             model.addAttribute("message", "No file selected to upload!");
             return "home";
         }
         if (this.fileService.fileNameExist(fileNew.getOriginalFilename(), user.getUserId())) {
-            System.out.println("name");
+            model.addAttribute("files", this.fileService.getFiles(user.getUserId()));
             model.addAttribute("uploadError", "File with the same filename already exists!");
             return "home";
         }
@@ -56,13 +55,11 @@ public class FileController {
             uploadFile.setFileSize(fileNew.getSize());
             uploadFile.setUserId(user.getUserId());
             this.fileService.addFile(uploadFile);
-            System.out.println("here");
-            model.addAttribute("files", this.fileService.getFiles(this.userService.getUser(authentication.getName()).getUserId()));
+            model.addAttribute("files", this.fileService.getFiles(user.getUserId()));
             model.addAttribute("success", true);
             model.addAttribute("message", "New File added successfully!");
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("there");
             model.addAttribute("uploadError", e.getMessage());
         }
         return "home";
