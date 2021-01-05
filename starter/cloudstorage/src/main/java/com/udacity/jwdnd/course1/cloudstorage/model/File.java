@@ -8,6 +8,18 @@ public class File {
     private Integer userId;
     private byte[] fileData;
 
+    public File(Integer fileId, String fileName, String contentType, Long fileSize, Integer userId, byte[] fileData) {
+        this.fileId = fileId;
+        this.fileName = fileName;
+        this.contentType = contentType;
+        this.fileSize = fileSize;
+        this.userId = userId;
+        this.fileData = fileData;
+    }
+
+    public File() {
+    }
+
     public Integer getFileId() {
         return this.fileId;
     }

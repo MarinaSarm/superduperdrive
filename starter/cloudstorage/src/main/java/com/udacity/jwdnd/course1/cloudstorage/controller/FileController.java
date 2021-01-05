@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,22 +33,43 @@ public class FileController {
         this.userService = userService;
     }
 
-    @PostMapping()
+    @PostMapping("upload")
     public String addFile(@RequestParam("fileUpload") MultipartFile fileNew, Authentication authentication, @ModelAttribute File file, Model model) throws IOException {
+        User user = this.userService.getUser(authentication.getName());
+        System.out.println("first");
         if (fileNew.isEmpty()) {
+            System.out.println("empty");
             model.addAttribute("success", false);
             model.addAttribute("message", "No file selected to upload!");
             return "home";
         }
-        this.fileService.addFile(authentication, fileNew);
-        model.addAttribute("files", this.fileService.getFiles(this.userService.getUser(authentication.getName()).getUserId()));
-        model.addAttribute("success", true);
-        model.addAttribute("message", "New File added successfully!");
+        if (this.fileService.fileNameExist(fileNew.getOriginalFilename(), user.getUserId())) {
+            System.out.println("name");
+            model.addAttribute("uploadError", "File with the same filename already exists!");
+            return "home";
+        }
+        try {
+            File uploadFile = new File();
+            uploadFile.setFileName(fileNew.getOriginalFilename());
+            uploadFile.setContentType(fileNew.getContentType());
+            uploadFile.setFileData(fileNew.getBytes());
+            uploadFile.setFileSize(fileNew.getSize());
+            uploadFile.setUserId(user.getUserId());
+            this.fileService.addFile(uploadFile);
+            System.out.println("here");
+            model.addAttribute("files", this.fileService.getFiles(this.userService.getUser(authentication.getName()).getUserId()));
+            model.addAttribute("success", true);
+            model.addAttribute("message", "New File added successfully!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("there");
+            model.addAttribute("uploadError", e.getMessage());
+        }
         return "home";
     }
 
     @GetMapping("delete/{fileid}")
-    public String deletefile(Authentication authentication, @ModelAttribute File file, Model model, @PathVariable(value = "fileid") Integer fileid) {
+    public String deleteFile(Authentication authentication, @ModelAttribute File file, Model model, @PathVariable(value = "fileid") Integer fileid) {
         User user = this.userService.getUser(authentication.getName());
         try {
             fileService.deleteFile(fileid);
@@ -62,12 +84,11 @@ public class FileController {
     }
 
     @GetMapping("view/{filename}")
-    public ResponseEntity<File> getFile(Authentication authentication, @PathVariable(value = "filename") String filename) {
-        User user = this.userService.getUser(authentication.getName());
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable(value = "filename") String filename) {
         File newFile = this.fileService.getFile(filename);
         return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(newFile.getContentType()))
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + newFile.getFileName() + "\"")
-            .body(newFile);
-
+            .body(new ByteArrayResource(newFile.getFileData()));
     }
 }

@@ -19,14 +19,8 @@ public class FileService {
         this.userService = userService;
     }
 
-    public Integer addFile(Authentication authentication, MultipartFile file) throws IOException {
-        File newFile = new File();
-        newFile.setFileData(file.getBytes());
-        newFile.setUserId(this.userService.getUser(authentication.getName()).getUserId());
-        newFile.setFileSize(file.getSize());
-        newFile.setFileName(file.getOriginalFilename());
-        newFile.setContentType(file.getContentType());
-        return fileMapper.insert(newFile);
+    public Integer addFile(File file){
+        return fileMapper.insert(file);
     }
 
     public void deleteFile(Integer fileid) {
@@ -39,5 +33,9 @@ public class FileService {
 
     public List<File> getFiles(Integer userid) {
         return fileMapper.getAllFiles(userid);
+    }
+
+    public boolean fileNameExist(String fileName, Integer userId) {
+        return (this.fileMapper.getFileNameFoUser(fileName, userId) != null);
     }
 }
