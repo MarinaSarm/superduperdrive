@@ -1,44 +1,44 @@
 package com.udacity.jwdnd.course1.cloudstorage.model;
 
 public class Credential {
-    private Integer credentialId;
+    private Integer credentialid;
     private String url;
-    private String userName;
+    private String username;
     private String key;
     private String password;
-    private Integer userId;
+    private Integer userid;
 
-    public Credential(Integer credentialId, String url, String userName, String key, String password, Integer userId) {
-        this.credentialId = credentialId;
+    public Credential(Integer credentialid, String url, String username, String key, String password, Integer userid) {
+        this.credentialid = credentialid;
         this.url = url;
-        this.userName = userName;
+        this.username = username;
         this.key = key;
         this.password = password;
-        this.userId = userId;
+        this.userid = userid;
     }
 
-    public Integer getcredentialId() {
-        return this.credentialId;
+    public Integer getCredentialId() {
+        return this.credentialid;
     }
 
-    public void setcredentialId(Integer credentialId) {
-        this.credentialId = credentialId;
+    public void setCredentialId(Integer credentialid) {
+        this.credentialid = credentialid;
     }
 
-    public String geturl() {
+    public String getUrl() {
         return this.url;
     }
 
-    public void seturl(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
-    public String getuserName() {
-        return this.userName;
+    public String getUserName() {
+        return this.username;
     }
 
-    public void setuserName(String userName) {
-        this.userName = userName;
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public String getKey() {
@@ -58,10 +58,10 @@ public class Credential {
     }
 
     public Integer getUserId() {
-        return this.userId;
+        return this.userid;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserId(Integer userid) {
+        this.userid = userid;
     }
 }

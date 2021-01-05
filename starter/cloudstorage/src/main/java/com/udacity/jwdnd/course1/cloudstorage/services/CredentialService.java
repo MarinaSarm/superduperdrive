@@ -4,6 +4,7 @@ import com.udacity.jwdnd.course1.cloudstorage.mapper.CredentialMapper;
 import com.udacity.jwdnd.course1.cloudstorage.mapper.FileMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
+import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,18 +12,16 @@ import java.util.List;
 @Service
 public class CredentialService {
     private CredentialMapper credentialMapper;
-    private UserService userService;
 
-    public CredentialService(CredentialMapper credentialMapper, UserService userService) {
+    public CredentialService(CredentialMapper credentialMapper) {
         this.credentialMapper = credentialMapper;
-        this.userService = userService;
     }
 
     public Integer addCreds(Credential cred){
         return credentialMapper.insert(cred);
     }
 
-    public void deleteFCreds(Integer credentialid) {
+    public void deleteCred(Integer credentialid) {
         credentialMapper.deleteCreds(credentialid);
     }
 
@@ -36,5 +35,9 @@ public class CredentialService {
 
     public boolean credsForUrlExist(String url, Integer userId) {
         return (this.credentialMapper.getUrlFoUser(url, userId) != null);
+    }
+
+    public void updateNote(Credential newCredential) {
+        credentialMapper.updateCred(newCredential);
     }
 }
