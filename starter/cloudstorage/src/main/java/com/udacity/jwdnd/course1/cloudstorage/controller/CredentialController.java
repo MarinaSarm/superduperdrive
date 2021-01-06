@@ -22,11 +22,17 @@ public class CredentialController {
     }
     @PostMapping("add")
     public String addNote(Authentication authentication, @ModelAttribute Credential cred, Model model) {
-        cred.setUserId(this.userService.getUser(authentication.getName()).getUserId());
+        User user = this.userService.getUser(authentication.getName());
+        cred.setUserId(user.getUserId());
+        if (this.credentialService.credsForUrlExist(cred.getUrl(), user.getUserId())) {
+            model.addAttribute("creds", this.credentialService.getAllCreds(user.getUserId()));
+            model.addAttribute("uploadError", "Credentials with the same url already exists!");
+            return "result";
+        }
         if(cred.getCredentialId() == null) {
             try {
                 this.credentialService.addCreds(cred);
-                model.addAttribute("creds", this.credentialService.getAllCreds(this.userService.getUser(authentication.getName()).getUserId()));
+                model.addAttribute("creds", this.credentialService.getAllCreds(user.getUserId()));
                 model.addAttribute("success", true);
                 model.addAttribute("message", "Credential was successfully added");
             } catch (Exception e) {
@@ -35,8 +41,8 @@ public class CredentialController {
             }
         } else {
             try {
-                this.credentialService.updateNote(cred);
-                model.addAttribute("creds", this.credentialService.getAllCreds(this.userService.getUser(authentication.getName()).getUserId()));
+                this.credentialService.updateCred(cred);
+                model.addAttribute("creds", this.credentialService.getAllCreds(user.getUserId()));
                 model.addAttribute("success", true);
                 model.addAttribute("message", "Credential was successfully updated");
             } catch (Exception e) {

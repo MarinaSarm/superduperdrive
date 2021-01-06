@@ -5,6 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.mapper.FileMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -49,7 +50,15 @@ public class CredentialService {
         return (this.credentialMapper.getUrlFoUser(url, userId) != null);
     }
 
-    public void updateNote(Credential newCredential) {
+    public void updateCred(Credential newCredential) {
+        String password = newCredential.getPassword();
+        SecureRandom random = new SecureRandom();
+        byte[] key = new byte[16];
+        random.nextBytes(key);
+        String encodedKey = Base64.getEncoder().encodeToString(key);
+        String encryptedPassword = this.encryptionService.encryptValue(password, encodedKey);
+        newCredential.setKey(encodedKey);
+        newCredential.setPassword(encryptedPassword);
         this.credentialMapper.updateCred(newCredential);
     }
 }
