@@ -7,30 +7,42 @@ import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 
 @Service
 public class CredentialService {
     private CredentialMapper credentialMapper;
+    private EncryptionService encryptionService;
 
-    public CredentialService(CredentialMapper credentialMapper) {
+    public CredentialService(CredentialMapper credentialMapper, EncryptionService encryptionService) {
         this.credentialMapper = credentialMapper;
+        this.encryptionService = encryptionService;
     }
 
     public Integer addCreds(Credential cred){
-        return credentialMapper.insert(cred);
+        String password = cred.getPassword();
+        SecureRandom random = new SecureRandom();
+        byte[] key = new byte[16];
+        random.nextBytes(key);
+        String encodedKey = Base64.getEncoder().encodeToString(key);
+        String encryptedPassword = this.encryptionService.encryptValue(password, encodedKey);
+        cred.setPassword(encryptedPassword);
+        cred.setKey(encodedKey);
+        return this.credentialMapper.insert(cred);
     }
 
     public void deleteCred(Integer credentialid) {
-        credentialMapper.deleteCreds(credentialid);
+        this.credentialMapper.deleteCreds(credentialid);
     }
 
     public Credential getCreds(String url) {
-        return credentialMapper.getCreds(url);
+        return this.credentialMapper.getCreds(url);
     }
 
     public List<Credential> getAllCreds(Integer userid) {
-        return credentialMapper.getAllCredentials(userid);
+        return this.credentialMapper.getAllCredentials(userid);
     }
 
     public boolean credsForUrlExist(String url, Integer userId) {
@@ -38,6 +50,6 @@ public class CredentialService {
     }
 
     public void updateNote(Credential newCredential) {
-        credentialMapper.updateCred(newCredential);
+        this.credentialMapper.updateCred(newCredential);
     }
 }
