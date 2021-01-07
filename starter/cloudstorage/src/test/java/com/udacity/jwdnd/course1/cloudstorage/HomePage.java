@@ -26,20 +26,41 @@ public class HomePage {
     @FindBy(css = "#nav-notes button")
     private WebElement noteCreate;
 
+    @FindBy(css = "#nav-credentials button")
+    private WebElement credCreate;
+
     @FindBy(id = "note-title")
     private WebElement noteTitle;
 
     @FindBy(id = "note-description")
     private WebElement noteDescription;
 
+    @FindBy(id = "credential-url")
+    private WebElement credentialUrl;
+
+    @FindBy(id = "credential-username")
+    private WebElement credentialUsername;
+
+    @FindBy(id = "credential-password")
+    private WebElement credentialPassword;
+
     @FindBy(id = "submit-note")
     private WebElement noteSubmit;
+
+    @FindBy(id = "submit-credential")
+    private WebElement submitCredential;
 
     @FindBy(css = "#noteTable button")
     private WebElement editNote;
 
+    @FindBy(css = "#credentialTable button")
+    private WebElement editCred;
+
     @FindBy(css = "#noteTable a")
     private WebElement deleteNote;
+
+    @FindBy(css = "#credentialTable a")
+    private WebElement deleteCred;
 
     private final JavascriptExecutor js;
 
@@ -59,6 +80,11 @@ public class HomePage {
         js.executeScript("arguments[0].click();", this.navNotes);
     }
 
+    public void credTabClick() {
+        wait.until(ExpectedConditions.elementToBeClickable(this.navCredentials));
+        js.executeScript("arguments[0].click();", this.navCredentials);
+    }
+
     public void createNote(String title, String description) {
         wait.until(ExpectedConditions.elementToBeClickable(this.noteCreate));
         js.executeScript("arguments[0].click();", this.noteCreate);
@@ -66,6 +92,16 @@ public class HomePage {
         js.executeScript("arguments[0].value='"+ description +"';", this.noteDescription);
         wait.until(ExpectedConditions.elementToBeClickable(this.noteSubmit));
         js.executeScript("arguments[0].click();", this.noteSubmit);
+    }
+
+    public void createCred(String url, String login, String password) {
+        wait.until(ExpectedConditions.elementToBeClickable(this.credCreate));
+        js.executeScript("arguments[0].click();", this.credCreate);
+        js.executeScript("arguments[0].value='"+ url +"';", this.credentialUrl);
+        js.executeScript("arguments[0].value='"+ login +"';", this.credentialUsername);
+        js.executeScript("arguments[0].value='"+ password +"';", this.credentialPassword);
+        wait.until(ExpectedConditions.elementToBeClickable(this.submitCredential));
+        js.executeScript("arguments[0].click();", this.submitCredential);
     }
 
     public void updateNote(String title, String description) {
@@ -77,15 +113,41 @@ public class HomePage {
         js.executeScript("arguments[0].click();", this.noteSubmit);
     }
 
+    public void updateNote(String url, String login, String password) {
+        wait.until(ExpectedConditions.elementToBeClickable(this.editCred));
+        js.executeScript("arguments[0].click();", this.editCred);
+        js.executeScript("arguments[0].value='"+ url +"';", this.credentialUrl);
+        js.executeScript("arguments[0].value='"+ login +"';", this.credentialUsername);
+        js.executeScript("arguments[0].value='"+ password +"';", this.credentialPassword);
+        wait.until(ExpectedConditions.elementToBeClickable(this.submitCredential));
+        js.executeScript("arguments[0].click();", this.submitCredential);
+    }
+
     public void deleteNote() {
         wait.until(ExpectedConditions.elementToBeClickable(this.deleteNote));
         js.executeScript("arguments[0].click();", this.deleteNote);
+    }
+
+    public void deleteCredential() {
+        wait.until(ExpectedConditions.elementToBeClickable(this.deleteCred));
+        js.executeScript("arguments[0].click();", this.deleteCred);
     }
 
     public boolean doesNoteExist() {
         try {
             driver.findElement(By.xpath("//table[@id='noteTable']/tbody/tr/td[2]"));
             driver.findElement(By.xpath("//table[@id='noteTable']/tbody/tr/th[1]"));
+            return true;
+        } catch(NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public boolean doesCredExist() {
+        try {
+            driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/td[2]"));
+            driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/th[1]"));
+            driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/td[3]"));
             return true;
         } catch(NoSuchElementException e) {
             return false;
