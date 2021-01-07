@@ -1,9 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -38,6 +35,12 @@ public class HomePage {
     @FindBy(id = "submit-note")
     private WebElement noteSubmit;
 
+    @FindBy(css = "#noteTable button")
+    private WebElement editNote;
+
+    @FindBy(css = "#noteTable a")
+    private WebElement deleteNote;
+
     private final JavascriptExecutor js;
 
     public HomePage(WebDriver webDriver) {
@@ -63,5 +66,29 @@ public class HomePage {
         js.executeScript("arguments[0].value='"+ description +"';", this.noteDescription);
         wait.until(ExpectedConditions.elementToBeClickable(this.noteSubmit));
         js.executeScript("arguments[0].click();", this.noteSubmit);
+    }
+
+    public void updateNote(String title, String description) {
+        wait.until(ExpectedConditions.elementToBeClickable(this.editNote));
+        js.executeScript("arguments[0].click();", this.editNote);
+        js.executeScript("arguments[0].value='"+ title +"';", this.noteTitle);
+        js.executeScript("arguments[0].value='"+ description +"';", this.noteDescription);
+        wait.until(ExpectedConditions.elementToBeClickable(this.noteSubmit));
+        js.executeScript("arguments[0].click();", this.noteSubmit);
+    }
+
+    public void deleteNote() {
+        wait.until(ExpectedConditions.elementToBeClickable(this.deleteNote));
+        js.executeScript("arguments[0].click();", this.deleteNote);
+    }
+
+    public boolean doesNoteExist() {
+        try {
+            driver.findElement(By.xpath("//table[@id='noteTable']/tbody/tr/td[2]"));
+            driver.findElement(By.xpath("//table[@id='noteTable']/tbody/tr/th[1]"));
+            return true;
+        } catch(NoSuchElementException e) {
+            return false;
+        }
     }
 }

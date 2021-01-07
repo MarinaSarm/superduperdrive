@@ -7,12 +7,12 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -98,9 +98,6 @@ class CloudStorageApplicationTests {
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.login(username, password);
 		HomePage homePage = new HomePage(driver);
-
-		assertEquals("Home", driver.getTitle());
-
 		homePage.navNotesTabClick();
 		homePage.createNote("note", "description");
 		WebElement result = driver.findElement(By.id("result"));
@@ -114,9 +111,51 @@ class CloudStorageApplicationTests {
 		assertEquals("Home", driver.getTitle());
 
 		homePage.navNotesTabClick();
-		WebElement notesTable = driver.findElement(By.id("noteTable"));
 
 		assertEquals("note", driver.findElement(By.xpath("//table[@id='noteTable']/tbody/tr/th[1]")).getAttribute("innerHTML"));
 		assertEquals("description", driver.findElement(By.xpath("//table[@id='noteTable']/tbody/tr/td[2]")).getAttribute("innerHTML"));
+	}
+
+	@Test
+	@Order(5)
+	public void testUpdateNote() {
+		driver.get(baseURL + "/login");
+		LoginPage loginPage = new LoginPage(driver);
+		loginPage.login(username, password);
+		HomePage homePage = new HomePage(driver);
+		homePage.navNotesTabClick();
+		homePage.updateNote("note updated", "description updated");
+		WebElement result = driver.findElement(By.id("result"));
+
+		assertEquals("Result", driver.getTitle());
+		assertEquals("Note was successfully updated", result.findElement(By.className("message")).getText());
+
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.homeClick();
+		homePage.navNotesTabClick();
+
+		assertEquals("note updated", driver.findElement(By.xpath("//table[@id='noteTable']/tbody/tr/th[1]")).getAttribute("innerHTML"));
+		assertEquals("description updated", driver.findElement(By.xpath("//table[@id='noteTable']/tbody/tr/td[2]")).getAttribute("innerHTML"));
+	}
+
+	@Test
+	@Order(6)
+	public void testDeleteNote() {
+		driver.get(baseURL + "/login");
+		LoginPage loginPage = new LoginPage(driver);
+		loginPage.login(username, password);
+		HomePage homePage = new HomePage(driver);
+		homePage.navNotesTabClick();
+		homePage.deleteNote();
+		WebElement result = driver.findElement(By.id("result"));
+
+		assertEquals("Result", driver.getTitle());
+		assertEquals("Note was deleted", result.findElement(By.className("message")).getText());
+
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.homeClick();
+		homePage.navNotesTabClick();
+
+		assertFalse(homePage.doesNoteExist());
 	}
 }
