@@ -37,7 +37,7 @@ public class LoginPage {
     public void login(String username, String password) {
         js.executeScript("arguments[0].value='"+ username +"';", this.usernameField);
         js.executeScript("arguments[0].value='"+ password +"';", this.passwordField);
-        js.executeScript("arguments[0].click();", submitButton);
+        js.executeScript("arguments[0].click();", this.submitButton);
     }
 
     public String getMessage() {

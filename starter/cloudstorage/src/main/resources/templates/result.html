@@ -9,21 +9,21 @@
         <title>Result</title>
     </head>
     <body class="p-3 mb-2 bg-light text-black">
-        <div class="container justify-content-center w-50 p-3" style="margin-top: 5em;">
+        <div id="result" class="container justify-content-center w-50 p-3" style="margin-top: 5em;">
             <div class="alert alert-success fill-parent" th:if="${success}">
                 <h1 class="display-5">Success</h1>
-                <span th:text="${message}">Your changes were successfully saved.</span>
-                <span>Click <a th:href="@{'/home'}">here</a> to continue.</span>
+                <span th:text="${message}" class="message">Your changes were successfully saved.</span>
+                <span>Click <a th:href="@{'/home'}" class="home-link">here</a> to continue.</span>
             </div>
             <div class="alert alert-danger fill-parent" th:if="${uploadError}">
                 <h1 class="display-5">Error</h1>
-                <span th:text="${uploadError}">Your changes were not saved.</span>
-                <span>Click <a th:href="@{'/home'}">here</a> to continue.</span>
+                <span th:text="${uploadError}" class="message">Your changes were not saved.</span>
+                <span>Click <a th:href="@{'/home'}" class="home-link">here</a> to continue.</span>
             </div>
             <div class="alert alert-danger fill-parent" th:if="${error}">
                 <h1 class="display-5">Error</h1>
-                <span th:text="${message}">Example Error Message</span>
-                <span>Click <a th:href="@{'/home'}">here</a> to continue.</span>
+                <span th:text="${message}" class="message">Example Error Message</span>
+                <span>Click <a th:href="@{'/home'}" class="home-link">here</a> to continue.</span>
             </div>
         </div>
     </body>
