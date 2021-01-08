@@ -211,12 +211,22 @@ class CloudStorageApplicationTests {
 		ResultPage resultPage = new ResultPage(driver);
 		resultPage.homeClick();
 		homePage.credTabClick();
-
-		homePage.credTabClick();
 		Credential credential = this.credentialService.getCreds("www-url2");
 
 		assertEquals("www-url2", driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/th[1]")).getAttribute("innerHTML"));
 		assertEquals("new2", driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/td[2]")).getAttribute("innerHTML"));
+		assertEquals(credential.getPassword(), driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/td[3]")).getAttribute("innerHTML"));
+
+		homePage.updateNote("www-url2", "new3", "1a2b3c");
+
+		assertEquals("Result", driver.getTitle());
+		assertEquals("Credential was successfully updated", result.findElement(By.className("message")).getText());
+
+		resultPage.homeClick();
+		homePage.credTabClick();
+
+		assertEquals("www-url2", driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/th[1]")).getAttribute("innerHTML"));
+		assertEquals("new3", driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/td[2]")).getAttribute("innerHTML"));
 		assertEquals(credential.getPassword(), driver.findElement(By.xpath("//table[@id='credentialTable']/tbody/tr/td[3]")).getAttribute("innerHTML"));
 	}
 

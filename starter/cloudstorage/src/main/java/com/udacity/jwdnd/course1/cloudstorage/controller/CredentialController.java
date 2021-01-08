@@ -24,12 +24,12 @@ public class CredentialController {
     public String addNote(Authentication authentication, @ModelAttribute Credential cred, Model model) {
         User user = this.userService.getUser(authentication.getName());
         cred.setUserId(user.getUserId());
-        if (this.credentialService.credsForUrlExist(cred.getUrl(), user.getUserId())) {
-            model.addAttribute("creds", this.credentialService.getAllCreds(user.getUserId()));
-            model.addAttribute("uploadError", "Credentials with the same url already exists!");
-            return "result";
-        }
         if(cred.getCredentialId() == null) {
+            if (this.credentialService.credsForUrlExist(cred.getUrl(), user.getUserId())) {
+                model.addAttribute("creds", this.credentialService.getAllCreds(user.getUserId()));
+                model.addAttribute("uploadError", "Credentials with the same url already exists!");
+                return "result";
+            }
             try {
                 this.credentialService.addCreds(cred);
                 model.addAttribute("creds", this.credentialService.getAllCreds(user.getUserId()));

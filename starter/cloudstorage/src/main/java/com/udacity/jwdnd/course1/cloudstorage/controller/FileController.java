@@ -38,8 +38,7 @@ public class FileController {
         User user = this.userService.getUser(authentication.getName());
         if (fileNew.isEmpty()) {
             model.addAttribute("files", this.fileService.getFiles(user.getUserId()));
-            model.addAttribute("success", false);
-            model.addAttribute("message", "No file selected to upload!");
+            model.addAttribute("uploadError", "No file selected to upload!");
             return "result";
         }
         if (this.fileService.fileNameExist(fileNew.getOriginalFilename(), user.getUserId())) {
